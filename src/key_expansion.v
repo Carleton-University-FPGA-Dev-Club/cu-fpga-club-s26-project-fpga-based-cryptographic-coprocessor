@@ -94,16 +94,16 @@ module key_expansion(
     function [7:0] round_constant(input [3:0] round_number);
     begin
         case (round_number)
-            4'd0: round_constant = 8'h01;
-            4'd1:round_constant = 8'h02;
-            4'd2:round_constant = 8'h04;
-            4'd3:round_constant = 8'h08;
-            4'd4:round_constant = 8'h10;
-            4'd5:round_constant = 8'h20;
-            4'd6:round_constant = 8'h40;
-            4'd7:round_constant = 8'h80;
-            4'd8:round_constant = 8'h1B;
-            4'd9: round_constant = 8'h36;
+            4'd1: round_constant = 8'h01;
+            4'd2:round_constant = 8'h02;
+            4'd3:round_constant = 8'h04;
+            4'd4:round_constant = 8'h08;
+            4'd5:round_constant = 8'h10;
+            4'd6:round_constant = 8'h20;
+            4'd7:round_constant = 8'h40;
+            4'd8:round_constant = 8'h80;
+            4'd9:round_constant = 8'h1B;
+            4'd10: round_constant = 8'h36;
             default: round_constant = 8'h00; 
         endcase
     end

@@ -79,7 +79,7 @@ module aes(
         state <= IDLE;
         state_register <= plaintext;
         key_register <= key;
-        round_number <= 0;
+        round_number <= 1;
         end
     else begin
         state <= next_state;
@@ -105,7 +105,7 @@ module aes(
                     next_key_register = key;
                     next_state = INITIAL_ROUND;
                     ready = 0;
-                    next_round_number = 0;
+                    next_round_number = 1;
                     end
                 else
                     next_state = IDLE;
