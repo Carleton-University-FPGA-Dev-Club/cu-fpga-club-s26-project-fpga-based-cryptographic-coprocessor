@@ -41,7 +41,7 @@ module aes(
     parameter NUMBER_OF_ROUNDS = 10;
 
     // Internal variables
-    reg [3:0] round_number = 0;
+    reg [3:0] round_number, next_round_number;
     reg [2:0] state, next_state;
     reg [127:0] state_register, next_state_register;
     reg [127:0] key_register, next_key_register;
@@ -79,11 +79,13 @@ module aes(
         state <= IDLE;
         state_register <= plaintext;
         key_register <= key;
+        round_number <= 0;
         end
     else begin
         state <= next_state;
         state_register <= next_state_register;
         key_register <= next_key_register;
+        round_number <= next_round_number;
         end
     end
 
@@ -93,8 +95,9 @@ module aes(
         next_state = state;
         next_state_register = state_register;
         next_key_register = key_register;
-
-        // And thus begin the cases
+        next_round_number = round_number;
+   
+        // And thus begin the cases  
         case (state)
             IDLE: begin
                 if (start) begin
@@ -102,6 +105,7 @@ module aes(
                     next_key_register = key;
                     next_state = INITIAL_ROUND;
                     ready = 0;
+                    next_round_number = 0;
                     end
                 else
                     next_state = IDLE;
@@ -132,7 +136,7 @@ module aes(
                     next_state = READY;
                 else begin
                     next_state = SUB_BYTES;
-                    round_number = round_number + 1;
+                    next_round_number = round_number + 1;
                     end
                 end
             READY: begin
