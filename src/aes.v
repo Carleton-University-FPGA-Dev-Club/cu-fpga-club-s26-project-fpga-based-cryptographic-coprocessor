@@ -151,6 +151,9 @@ module aes(
 
     // 3. Output generation
     always @(*) begin
+        ciphertext = state_register;
+        ready = 0;
+        
         if (state == READY) begin
             ciphertext = state_register;
             ready = 1;
