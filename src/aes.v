@@ -66,7 +66,7 @@ module aes(
     );
 
     wire [127:0] keyexpansion_out;
-    key_expansion(
+    key_expansion ke(
         .key(key_register),
         .round_number(round_number),
         .out(keyexpansion_out)
