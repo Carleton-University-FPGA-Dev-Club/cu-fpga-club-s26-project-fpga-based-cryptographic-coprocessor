@@ -36,10 +36,11 @@ module aes(
     parameter SUB_BYTES = 3'b010;
     parameter SHIFT_ROWS = 3'b011;
     parameter MIX_COLUMN = 3'b100;
-    parameter ADD_ROUND_KEY = 3'b101;
-    parameter READY = 3'b110;
-    parameter NUMBER_OF_ROUNDS = 10;
-
+    parameter EXPAND_KEY = 3'b101;
+    parameter ADD_ROUND_KEY = 3'b110;
+    parameter READY = 3'b111;
+    parameter NUMBER_OF_ROUNDS = 10; 
+     
     // Internal variables
     reg [3:0] round_number, next_round_number;
     reg [2:0] state, next_state;
@@ -104,7 +105,7 @@ module aes(
                     next_state_register = plaintext;
                     next_key_register = key;
                     next_state = INITIAL_ROUND;
-                    ready = 0;
+                    //ready = 0;
                     next_round_number = 1;
                     end
                 else
@@ -112,6 +113,11 @@ module aes(
                 end
             INITIAL_ROUND: begin
                 next_state_register = state_register ^ key_register;
+                //next_key_register = keyexpansion_out; // Let's generate another key here, so we get 11 keys in total
+                next_state = EXPAND_KEY; 
+                end
+            EXPAND_KEY: begin
+                next_key_register = keyexpansion_out;
                 next_state = SUB_BYTES;
                 end
             SUB_BYTES: begin
@@ -131,11 +137,11 @@ module aes(
                 end
             ADD_ROUND_KEY: begin
                 next_state_register = state_register ^ key_register;
-                next_key_register = keyexpansion_out;
+                //next_key_register = keyexpansion_out;
                 if (round_number == NUMBER_OF_ROUNDS)
                     next_state = READY;
-                else begin
-                    next_state = SUB_BYTES;
+                else begin 
+                    next_state = EXPAND_KEY;
                     next_round_number = round_number + 1;
                     end
                 end
