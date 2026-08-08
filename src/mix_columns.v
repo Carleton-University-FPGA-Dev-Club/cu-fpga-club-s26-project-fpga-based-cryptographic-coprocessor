@@ -33,88 +33,88 @@ module mix_columns(
     
     always @(*) begin
         // First column
-        out[0*8 +: 8] = (galois_multiply(state[0*8 +: 8], 2) 
-        ^ galois_multiply(state[1*8 +: 8], 3) 
-        ^ galois_multiply(state[2*8 +: 8], 1) 
-        ^ galois_multiply(state[3*8 +: 8], 1));
+        out[15*8 +: 8] = (galois_multiply(state[15*8 +: 8], 2) 
+        ^ galois_multiply(state[14*8 +: 8], 3) 
+        ^ galois_multiply(state[13*8 +: 8], 1) 
+        ^ galois_multiply(state[12*8 +: 8], 1));
         
-        out[1*8 +: 8] = (galois_multiply(state[0*8 +: 8], 1) 
-        ^ galois_multiply(state[1*8 +: 8], 2) 
-        ^ galois_multiply(state[2*8 +: 8], 3) 
-        ^ galois_multiply(state[3*8 +: 8], 1));
+        out[14*8 +: 8] = (galois_multiply(state[15*8 +: 8], 1) 
+        ^ galois_multiply(state[14*8 +: 8], 2) 
+        ^ galois_multiply(state[13*8 +: 8], 3) 
+        ^ galois_multiply(state[12*8 +: 8], 1));
         
-        out[2*8 +: 8] = (galois_multiply(state[0*8 +: 8], 1) 
-        ^ galois_multiply(state[1*8 +: 8], 1) 
-        ^ galois_multiply(state[2*8 +: 8], 2) 
-        ^ galois_multiply(state[3*8 +: 8], 3));
+        out[13*8 +: 8] = (galois_multiply(state[15*8 +: 8], 1) 
+        ^ galois_multiply(state[14*8 +: 8], 1) 
+        ^ galois_multiply(state[13*8 +: 8], 2) 
+        ^ galois_multiply(state[12*8 +: 8], 3));
         
-        out[3*8 +: 8] = (galois_multiply(state[0*8 +: 8], 3) 
-        ^ galois_multiply(state[1*8 +: 8], 1) 
-        ^ galois_multiply(state[2*8 +: 8], 1) 
-        ^ galois_multiply(state[3*8 +: 8], 2));
+        out[12*8 +: 8] = (galois_multiply(state[15*8 +: 8], 3) 
+        ^ galois_multiply(state[14*8 +: 8], 1) 
+        ^ galois_multiply(state[13*8 +: 8], 1) 
+        ^ galois_multiply(state[12*8 +: 8], 2));
     
         // Second column
-        out[4*8 +: 8] = (galois_multiply(state[4*8 +: 8], 2) 
-        ^ galois_multiply(state[5*8 +: 8], 3) 
-        ^ galois_multiply(state[6*8 +: 8], 1) 
-        ^ galois_multiply(state[7*8 +: 8], 1));
+        out[11*8 +: 8] = (galois_multiply(state[11*8 +: 8], 2) 
+        ^ galois_multiply(state[10*8 +: 8], 3) 
+        ^ galois_multiply(state[9*8 +: 8], 1) 
+        ^ galois_multiply(state[8*8 +: 8], 1));
         
-        out[5*8 +: 8] = (galois_multiply(state[4*8 +: 8], 1) 
-        ^ galois_multiply(state[5*8 +: 8], 2) 
-        ^ galois_multiply(state[6*8 +: 8], 3) 
-        ^ galois_multiply(state[7*8 +: 8], 1));
+        out[10*8 +: 8] = (galois_multiply(state[11*8 +: 8], 1) 
+        ^ galois_multiply(state[10*8 +: 8], 2) 
+        ^ galois_multiply(state[9*8 +: 8], 3) 
+        ^ galois_multiply(state[8*8 +: 8], 1));
         
-        out[6*8 +: 8] = (galois_multiply(state[4*8 +: 8], 1) 
-        ^ galois_multiply(state[5*8 +: 8], 1) 
-        ^ galois_multiply(state[6*8 +: 8], 2) 
-        ^ galois_multiply(state[7*8 +: 8], 3));
+        out[9*8 +: 8] = (galois_multiply(state[11*8 +: 8], 1) 
+        ^ galois_multiply(state[10*8 +: 8], 1) 
+        ^ galois_multiply(state[9*8 +: 8], 2) 
+        ^ galois_multiply(state[8*8 +: 8], 3));
         
-        out[7*8 +: 8] = (galois_multiply(state[4*8 +: 8], 3) 
-        ^ galois_multiply(state[5*8 +: 8], 1) 
-        ^ galois_multiply(state[6*8 +: 8], 1) 
-        ^ galois_multiply(state[7*8 +: 8], 2));
+        out[8*8 +: 8] = (galois_multiply(state[11*8 +: 8], 3) 
+        ^ galois_multiply(state[10*8 +: 8], 1) 
+        ^ galois_multiply(state[9*8 +: 8], 1) 
+        ^ galois_multiply(state[8*8 +: 8], 2));
         
         // Third column
-        out[8*8 +: 8] = (galois_multiply(state[8*8 +: 8], 2) 
-        ^ galois_multiply(state[9*8 +: 8], 3) 
-        ^ galois_multiply(state[10*8 +: 8], 1) 
-        ^ galois_multiply(state[11*8 +: 8], 1));
+        out[7*8 +: 8] = (galois_multiply(state[7*8 +: 8], 2) 
+        ^ galois_multiply(state[6*8 +: 8], 3) 
+        ^ galois_multiply(state[5*8 +: 8], 1) 
+        ^ galois_multiply(state[4*8 +: 8], 1));
         
-        out[9*8 +: 8] = (galois_multiply(state[8*8 +: 8], 1) 
-        ^ galois_multiply(state[9*8 +: 8], 2) 
-        ^ galois_multiply(state[10*8 +: 8], 3) 
-        ^ galois_multiply(state[11*8 +: 8], 1));
+        out[6*8 +: 8] = (galois_multiply(state[7*8 +: 8], 1) 
+        ^ galois_multiply(state[6*8 +: 8], 2) 
+        ^ galois_multiply(state[5*8 +: 8], 3) 
+        ^ galois_multiply(state[4*8 +: 8], 1));
         
-        out[10*8 +: 8] = (galois_multiply(state[8*8 +: 8], 1) 
-        ^ galois_multiply(state[9*8 +: 8], 1) 
-        ^ galois_multiply(state[10*8 +: 8], 2) 
-        ^ galois_multiply(state[11*8 +: 8], 3));
+        out[5*8 +: 8] = (galois_multiply(state[7*8 +: 8], 1) 
+        ^ galois_multiply(state[6*8 +: 8], 1) 
+        ^ galois_multiply(state[5*8 +: 8], 2) 
+        ^ galois_multiply(state[4*8 +: 8], 3));
         
-        out[11*8 +: 8] = (galois_multiply(state[8*8 +: 8], 3) 
-        ^ galois_multiply(state[9*8 +: 8], 1) 
-        ^ galois_multiply(state[10*8 +: 8], 1) 
-        ^ galois_multiply(state[11*8 +: 8], 2));
+        out[4*8 +: 8] = (galois_multiply(state[7*8 +: 8], 3) 
+        ^ galois_multiply(state[6*8 +: 8], 1) 
+        ^ galois_multiply(state[5*8 +: 8], 1) 
+        ^ galois_multiply(state[4*8 +: 8], 2));
         
         // Fourth column
-        out[12*8 +: 8] = (galois_multiply(state[12*8 +: 8], 2) 
-        ^ galois_multiply(state[13*8 +: 8], 3) 
-        ^ galois_multiply(state[14*8 +: 8], 1) 
-        ^ galois_multiply(state[15*8 +: 8], 1));
+        out[3*8 +: 8] = (galois_multiply(state[3*8 +: 8], 2) 
+        ^ galois_multiply(state[2*8 +: 8], 3) 
+        ^ galois_multiply(state[1*8 +: 8], 1) 
+        ^ galois_multiply(state[0*8 +: 8], 1));
         
-        out[13*8 +: 8] = (galois_multiply(state[12*8 +: 8], 1) 
-        ^ galois_multiply(state[13*8 +: 8], 2) 
-        ^ galois_multiply(state[14*8 +: 8], 3) 
-        ^ galois_multiply(state[15*8 +: 8], 1));
+        out[2*8 +: 8] = (galois_multiply(state[3*8 +: 8], 1) 
+        ^ galois_multiply(state[2*8 +: 8], 2) 
+        ^ galois_multiply(state[1*8 +: 8], 3) 
+        ^ galois_multiply(state[0*8 +: 8], 1));
         
-        out[14*8 +: 8] = (galois_multiply(state[12*8 +: 8], 1) 
-        ^ galois_multiply(state[13*8 +: 8], 1) 
-        ^ galois_multiply(state[14*8 +: 8], 2) 
-        ^ galois_multiply(state[15*8 +: 8], 3));
+        out[1*8 +: 8] = (galois_multiply(state[3*8 +: 8], 1) 
+        ^ galois_multiply(state[2*8 +: 8], 1) 
+        ^ galois_multiply(state[1*8 +: 8], 2) 
+        ^ galois_multiply(state[0*8 +: 8], 3));
         
-        out[15*8 +: 8] = (galois_multiply(state[12*8 +: 8], 3) 
-        ^ galois_multiply(state[13*8 +: 8], 1) 
-        ^ galois_multiply(state[14*8 +: 8], 1) 
-        ^ galois_multiply(state[15*8 +: 8], 2));
+        out[0*8 +: 8] = (galois_multiply(state[3*8 +: 8], 3) 
+        ^ galois_multiply(state[2*8 +: 8], 1) 
+        ^ galois_multiply(state[1*8 +: 8], 1) 
+        ^ galois_multiply(state[0*8 +: 8], 2));
     end
    
    /* Multiplies a state byte by a constant in the Galois GF(2^8) field.

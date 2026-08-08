@@ -39,32 +39,32 @@ module shift_rows(
     
     always @(*) begin 
         // First row (B0, B4, B8, B12) remains unchanged
-        out[end_bit(0)  : start_bit(0)] = state[end_bit(0) : start_bit(0)];
-        out[end_bit(4)  : start_bit(4)] = state[end_bit(4) : start_bit(4)];
-        out[end_bit(8)  : start_bit(8)] = state[end_bit(8) : start_bit(8)];
-        out[end_bit(12)  : start_bit(12)] = state[end_bit(12) : start_bit(12)];
+        out[end_bit(15)  : start_bit(15)] = state[end_bit(15) : start_bit(15)];
+        out[end_bit(11)  : start_bit(11)] = state[end_bit(11) : start_bit(11)];
+        out[end_bit(7)  : start_bit(7)] = state[end_bit(7) : start_bit(7)];
+        out[end_bit(3)  : start_bit(3)] = state[end_bit(3) : start_bit(3)];
         
         // Second row (B1, B5, B9, B13) moves one to the left
         //temp = 
-        out[end_bit(1)  : start_bit(1)] = state[end_bit(5) : start_bit(5)];
-        out[end_bit(5)  : start_bit(5)] = state[end_bit(9) : start_bit(9)];
-        out[end_bit(9)  : start_bit(9)] = state[end_bit(13): start_bit(13)];
-        out[end_bit(13) : start_bit(13)] = state[end_bit(1) : start_bit(1)];
+        out[end_bit(14)  : start_bit(14)] = state[end_bit(10) : start_bit(10)];
+        out[end_bit(10)  : start_bit(10)] = state[end_bit(6) : start_bit(6)];
+        out[end_bit(6)  : start_bit(6)] = state[end_bit(2): start_bit(2)];
+        out[end_bit(2) : start_bit(2)] = state[end_bit(14) : start_bit(14)];
   
         // Third row (B2, B6, B10, B14) moves two to the left
         //temp = 
-        out[end_bit(2): start_bit(2)] = state[end_bit(10) : start_bit(10)];
-        out[end_bit(10) : start_bit(10)] = state[end_bit(2) : start_bit(2)];
+        out[end_bit(13): start_bit(13)] = state[end_bit(5) : start_bit(5)];
+        out[end_bit(9) : start_bit(9)] = state[end_bit(1) : start_bit(1)];
         //temp = 
-        out[end_bit(6) : start_bit(6)] = state[end_bit(14) : start_bit(14)];
-        out[end_bit(14) : start_bit(14)] = state[end_bit(6) : start_bit(6)];
+        out[end_bit(5) : start_bit(5)] = state[end_bit(13) : start_bit(13)];
+        out[end_bit(1) : start_bit(1)] = state[end_bit(9) : start_bit(9)];
         
         // Fourth row (B3, B7, B11, B15) moves three to the left
         //temp = 
-        out[end_bit(3) : start_bit(3)] = state[end_bit(15) : start_bit(15)];
-        out[end_bit(15) : start_bit(15)] = state[end_bit(11) : start_bit(11)];
-        out[end_bit(11) : start_bit(11)] = state[end_bit(7) : start_bit(7)];
-        out[end_bit(7): start_bit(7)] = state[end_bit(3) : start_bit(3)];
+        out[end_bit(12) : start_bit(12)] = state[end_bit(0) : start_bit(0)];
+        out[end_bit(8) : start_bit(8)] = state[end_bit(12) : start_bit(12)];
+        out[end_bit(4) : start_bit(4)] = state[end_bit(8) : start_bit(8)];
+        out[end_bit(0): start_bit(0)] = state[end_bit(4) : start_bit(4)];
     end
     
     function integer start_bit(input integer byte); 
