@@ -143,7 +143,7 @@ module aes(
                     end
                 end
             READY: begin
-                next_state = IDLE;
+                next_state = READY;
                 end
             default: begin
                 next_state = 3'bx;
