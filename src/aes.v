@@ -78,9 +78,9 @@ module aes(
     always @(posedge clk or posedge rst) begin
     if (rst) begin
         state <= IDLE;
-        state_register <= plaintext;
-        key_register <= key;
-        round_number <= 1;
+        state_register <= 128'b0;
+        key_register <= 128'b0;
+        round_number <= 4'b1;
         end
     else begin
         state <= next_state;
@@ -105,7 +105,6 @@ module aes(
                     next_state_register = plaintext;
                     next_key_register = key;
                     next_state = INITIAL_ROUND;
-                    //ready = 0;
                     next_round_number = 1;
                     end
                 else
@@ -113,7 +112,6 @@ module aes(
                 end
             INITIAL_ROUND: begin
                 next_state_register = state_register ^ key_register;
-                //next_key_register = keyexpansion_out; // Let's generate another key here, so we get 11 keys in total
                 next_state = EXPAND_KEY; 
                 end
             EXPAND_KEY: begin
@@ -137,7 +135,6 @@ module aes(
                 end
             ADD_ROUND_KEY: begin
                 next_state_register = state_register ^ key_register;
-                //next_key_register = keyexpansion_out;
                 if (round_number == NUMBER_OF_ROUNDS)
                     next_state = READY;
                 else begin 
@@ -149,8 +146,10 @@ module aes(
                 next_state = IDLE;
                 end
             default: begin
-                // Note to self: Same code as reset maybe?
-                // So that if we do miss a case, a reset would be glaringly obvious in the testbench simulation.
+                next_state = 3'bx;
+                next_state_register = 128'bx;
+                next_key_register = 128'bx;
+                next_round_number = 4'bx;
             end
         endcase
     end
