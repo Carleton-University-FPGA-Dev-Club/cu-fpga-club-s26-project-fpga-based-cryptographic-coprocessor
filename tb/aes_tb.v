@@ -86,11 +86,17 @@ module aes_tb;
 	    key = 128'h000102030405060708090a0b0c0d0e0f;
 	    expected_ciphertext = 128'h69c4e0d86a7b0430d8cdb78070b4c55a;
         
+        rst = 0;
+        start = 0;
         #10;
+        rst = 1;
+        #10; 
+        rst = 0;
+        #10;
+        
         start = 1;
         #10;
         start = 0;
-        #10;
         wait(ready);
         
         if (ciphertext == expected_ciphertext)
