@@ -1,9 +1,10 @@
+#include <string.h>
+#include <stdio.h>
+
 #include "xil_types.h"
 #include "xil_io.h"
 #include "xparameters.h"
 #include "coprocessor.h"
-#include "string.h"
-
 
 // AXI Register Definitions
 #define CONTROL_REGISTER XPAR_COPROCESSOR_0_S00_AXI_BASEADDR
@@ -15,29 +16,48 @@
 
 // The only public function, the rest is internal
 // In the sense that applications using this module should not call anything else
-void encrypt(char *ciphertext, char *plaintext, char *key) {
+void encrypt(u32 *ciphertext, char *plaintext, char *key) {
 	reset_fsm();
-	char ciphertext[128];
 	send_encryption_command(ciphertext, plaintext, key);
 }
 
 // Encrypts one 128-bit chunk of data
-void send_encryption_command(char *ciphertext, char *plaintext, char *key) {
+void send_encryption_command(u32 *ciphertext, char *plaintext, char *key) {
 	u32 plaintext_blocks[4];
 	u32 key_blocks[4];
 
 	chunk_128_into_32_bits(plaintext_blocks, plaintext);
 	chunk_128_into_32_bits(key_blocks, key);
 
+	//for (int i = 0; i < 4; i++) {
+	//	printf("Plaintext block %d: 0x%08lx\n", i, plaintext_blocks[i]);
+	//	printf("Key block %d: 0x%08lx\n", i, key_blocks[i]);
+	//}
+
 	write_to_plaintext_registers(plaintext_blocks);
 	write_to_key_registers(key_blocks);
+
+	//u32 plaintext_addr = PLAINTEXT_REGISTER_BASE;
+	//for (int i = 0; i < 4; i++) {
+	//	u32 plaintext_chunk = Xil_In32(plaintext_addr);
+	//	printf("Plaintext chunk at address %lx: %08lx\n", plaintext_addr, plaintext_chunk);
+	//	plaintext_addr += 0x04;
+	//}
+
+	//u32 key_addr = KEY_REGISTER_BASE;
+	//for (int i = 0; i < 4; i++) {
+	//	u32 key_chunk = Xil_In32(key_addr);
+	//	printf("Key chunk at address %lx: %08lx\n", key_addr, key_chunk);
+	//	key_addr += 0x04;
+	//}
 
 	start_encryption();
 	poll_ready_register();
 
-	u32 ciphertext_blocks[4];
-	read_ciphertext_registers(ciphertext_blocks);
-	chunk_32_into_128_bits(ciphertext, ciphertext_blocks);
+	read_ciphertext_registers(ciphertext);
+	//for (int i = 0; i < 4; i++) {
+	//	printf("Ciphertext chunk at %d: %08lx\n", i, ciphertext[i]);
+	//}
 }
 
 // Interaction with AXI registers
@@ -50,7 +70,7 @@ void start_encryption() {
 }
 
 void poll_ready_register() {
-	u32 status; 
+	u32 status;
 	while (1) {
 		status = Xil_In32(STATUS_REGISTER);
 		if (status == 0b1)
@@ -66,10 +86,10 @@ void write_to_plaintext_registers(u32 *plaintext) {
 	}
 }
 
-void write_to_key_registers(char *key) {
+void write_to_key_registers(u32 *key) {
 	u32 addr = KEY_REGISTER_BASE;
 	for (int i = 0; i < 4; i++) {
-		Xil_Out32(addr, plaintext[i]);
+		Xil_Out32(addr, key[i]);
 		addr = addr + 0x04;
 	}
 }
@@ -83,13 +103,19 @@ void read_ciphertext_registers(u32 *ciphertext) {
 }
 
 // Utility functions
-// Length of chunks is constant 4
-void chunk_128_into_32_bits(u32 *chunks, char *block) {
-	for (int i = 0; i < 4; i++)
-		memcpy(&chunks[i], &block[i*4], 4);
+
+// Reverses endianness
+uint32_t reverse_uint32(uint32_t val) {
+    return ((val & 0x000000FF) << 24) |
+           ((val & 0x0000FF00) << 8)  |
+           ((val & 0x00FF0000) >> 8)  |
+           ((val & 0xFF000000) >> 24);
 }
 
-void chunk_32_into_128_bits(char *block, u32 *chunks) {
-	for (int i = 0; i < 4; i++)
-		memcpy(&block[i*4], &chunks[i], 4);
+// Length of chunks is constant 4
+void chunk_128_into_32_bits(u32 *chunks, char *block) {
+	for (int i = 0; i < 4; i++) {
+		memcpy(&chunks[i], &block[i*4], 4);
+		chunks[i] = reverse_uint32(chunks[i]);
+	}
 }
