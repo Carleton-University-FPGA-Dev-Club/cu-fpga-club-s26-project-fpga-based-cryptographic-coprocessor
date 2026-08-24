@@ -6,6 +6,33 @@
 #include "xparameters.h"
 #include "coprocessor.h"
 
+/*
+ * AXI-4 Lite can only transfer 32-bit words at a time.
+ * The 128-bit plaintext, key, and ciphertext need to be chunked into 4 registers.
+ *
+ * The following is the "register map" that PS and PL agree on.
+ * Each of the registers contain a 32-bit value.
+ * Each of the control and status fields are 1-bit, and they start from the LSB.
+ * |------------------------------------------------------|
+ * | Register	| Value						| Address	  |
+ * |------------------------------------------------------|
+ * | R0			| Control (Reset, Start)	| BASE		  |
+ * | R1			| Status (Ready)			| BASE + 0x04 |
+ * | R2			| Plaintext 0				| BASE + 0x08 |
+ * | R3			| Plaintext 1				| BASE + 0x0C |
+ * | R4			| Plaintext 2				| BASE + 0x10 |
+ * | R5			| Plaintext 3				| BASE + 0x14 |
+ * | R6			| Key 0						| BASE + 0x18 |
+ * | R7			| Key 1						| BASE + 0x1C |
+ * | R8			| Key 2						| BASE + 0x20 |
+ * | R9			| Key 3						| BASE + 0x24 |
+ * | R10		| Ciphertext 0				| BASE + 0x28 |
+ * | R11		| Ciphertext 1				| BASE + 0x2C |
+ * | R12		| Ciphertext 2				| BASE + 0x30 |
+ * | R13		| Ciphertext 3				| BASE + 0x34 |
+ * |------------------------------------------------------|
+ */
+
 // AXI Register Definitions
 #define CONTROL_REGISTER XPAR_COPROCESSOR_0_S00_AXI_BASEADDR
 #define STATUS_REGISTER CONTROL_REGISTER + 0x04
