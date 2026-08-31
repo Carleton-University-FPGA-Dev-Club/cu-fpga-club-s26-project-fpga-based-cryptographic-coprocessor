@@ -3,6 +3,7 @@ This file goes over a step-by-step guide on creating this project and getting it
 
 The project's `README` comes with [build scripts](https://github.com/Carleton-University-FPGA-Dev-Club/cu-fpga-club-s26-project-fpga-based-cryptographic-coprocessor/tree/main#build), which automatically executes the Vivado-related steps below. Feel free to read through if the script fails or if you are curious about the underlying implementation, specific issues, or contexts!
 
+# Hardware Development - Vivado
 ## Vivado Project Creation
 
 1. In Vivado, click Create Project ► Select Name & Project Location ► Project Type is RTL Project.
@@ -176,6 +177,67 @@ With a functional block design, we are almost ready to export our hardware and w
 
 The `.xsa` file will be used by Vitis IDE to identify the platform we are programming for. It contains a description of the entire hardware specification that the software developers will need to know. For instance, it describes the IP blocks from our block design, the memory map that was linked in the IP packager, and the bitstream data that will be used to program the FPGA fabric.
 
+# Software Development - Vitis
+
+## Vitis Platform
+1. Open Vitis and on the landing page, click `Create Platform Project` ► `Create a new platform from hardware (XSA)`
+2. Navigate to the directory where your Vivado-generated `.xsa` file is stored and select it. 
+3. Leave other defaults, especially `standalone` as this is a bare-metal project and no operating systems are involved. Click `Finish`.
+<img width="959" height="563" alt="image" src="https://github.com/user-attachments/assets/ca7eaea6-3703-4595-8185-7174cc6c2d97" />
+
+*Figure 1: Create Platform Project on Vitis Landing Page*
+
+2. On the Vitis project page, click the hammer icon to `Build` the platform.
+<img width="959" height="563" alt="image" src="https://github.com/user-attachments/assets/5cbe3f00-84ff-48a0-a16b-d947c097a67e" />
+
+*Figure 2: Building the Platform (i.e. Hardware)*
+
+> [!IMPORTANT]
+> You may see errors such as the following when building the platform. These are caused by faulty Makefiles inside the platform files.  
+> ```cc1.exe: fatal error: *.c: Invalid argument```  
+> 
+> You need to edit the following two files, pay attention to your **xsa filename**:
+> 1. ```/zynq_fsbl/zynq_fsbl_bsp/ps7_cortexa9_0/libsrc/<xsa filename>/src/Makefile```     
+> 2. ```/ps7_cortexa9_0/standalone_domain/bsp/ps7_cortexa9_0/libsrc/<xsa filename>/src/Makefile```   
+> 
+> Find `OUTS = *.o` in both Makefiles.  
+> Replace it with `OUTS = $(addsuffix .o, $(basename $(wildcard *.c)))`.  
+>
+> Find `LIBSOURCES=*.c` in both Makefiles.  
+> Replace it with `LIBSOURCES=$(wildcard *.c)`.  
+> Re-build the platform.
+
+3. Next, click `File` ► `New` ► `Application Project...` ► Select the `coprocessor` platform built above.
+<img width="959" height="563" alt="image" src="https://github.com/user-attachments/assets/f1f9c47a-5b95-4173-b18f-5d3fcfa99b27" />
+
+*Figure 3: Creating an Application Project*
+
+4. Give the application a name, leave all else as default, and select the `Hello World` template when prompted.
+5. In the `src` subdirectory, you can add all the `.c` files present in the `software` folder of this repository. This can be done by right clicking `src` ► `New` ► `file`.
+
+<img width="959" height="563" alt="image" src="https://github.com/user-attachments/assets/cd562f7b-4e7f-47ae-96ad-f0258e0b523f" />
+
+*Figure 4: Coprocessor Application Created*
+
+6. From the top menu, select `Window` ► `Show view...`  ► `Vitis` ► `Vitis Serial Terminal`
+7. Connect the Digilent Zybo Z7-20 FPGA board to your computer using the USB cable.
+8. Using the `+` button in the Vitis Serial Terminal ► Select `COM Port` (the number may vary) ► Click `OK`
+
+<img width="959" height="563" alt="image" src="https://github.com/user-attachments/assets/3a127530-e170-4ca5-b5b6-541a6450b66b" />
+
+*Figure 5: Source Files Added (See Explorer Tab on the Left), FPGA Board Connected via COM Port*
+
+9. Click the hammer icon again to build the application.
+10. In the `Explorer` on the left ► Right click on `<application name> [standalone on ps7_cortex9_0]` ► `Run As` ► `1 Launch Hardware (Single Application Debug)`
+
+<img width="959" height="563" alt="image" src="https://github.com/user-attachments/assets/b743d71f-80ec-4a2b-a8f4-819d5b1014cc" />
+
+*Figure 6: Running the Application*
+
+11. Interact with the bank application in the Vitis Terminal, enjoy!
+
+> [!NOTE]
+> Once you exit the application, you can press the `PS-SRST` button on the FPGA board before starting over again. If you get errors when clicking `Run As`, you may want to head into the `Debug` tab (top right corner of Vitis) and press the `Disconnect` icon to stop the existing debug session and then try again.
 
 ## Resources
 This implementation was inspired from several resources and projects, which you can check out here:
