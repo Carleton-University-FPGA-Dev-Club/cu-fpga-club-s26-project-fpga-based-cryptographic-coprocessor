@@ -1,7 +1,7 @@
 # FPGA-Based Cryptographic Coprocessor
 A hardware accelerated AES-128 encryption module targetting Zynq-7000 SoCs. Comes with a software interface written in C, allowing applications to easily integrate data encryption with a simple function call.
 
-Part of the Carleton University FPGA Club Summer 2026.
+Part of the Carleton University FPGA Summer Club 2026.
 
 ## Description
 A cryptographic coprocessor is hardware in a larger system that offloads cryptographic operations off the *main CPU*. This helps the *main CPU* focus on other tasks, which improves system responsiveness.
@@ -17,9 +17,9 @@ This naturally forces the hard cores (ARM - PS) to interact with the soft cores 
 
 ## Specification
 * **Development Target:** Digilent Zybo Z7-20 FPGA board
-* **Synthesis / Simulation Environment:** Xilinx Vivado 2023.1 
-* **Software / Debugging Environment:** Vitis 2023.1
-* **Technologies:** Verilog 2001, AXI-4 Lite Communication Protocol, Git / GitHub 
+* **Hardware Development Environment:** Xilinx Vivado 2023.1 
+* **Software Development Environment:** Vitis 2023.1
+* **Technologies:** Verilog HDL, AXI-4 Lite Communication Protocol, Git / GitHub 
 
 ## Organization
 ```
@@ -32,13 +32,21 @@ This naturally forces the hard cores (ARM - PS) to interact with the soft cores 
 ```
 
 ## Build
-This repository follows the standard practice for HDL version control. The minimal source files are tracked using Git, and `.tcl` files are used to regenerate the project using Vivado and Vitis. This method prevents Vivado-specific binaries and other illegible files.
+For this project, minimal source files are tracked using Git, and `.tcl` scripts are used to regenerate the project using Vivado and Vitis. This method prevents tracking Vivado-specific binaries and other illegible files.
 
+Open Vivado, and use the Tcl console to navigate to this project's `scripts` directory and run:
 ```
-git clone https://github.com/Carleton-University-FPGA-Dev-Club/cu-fpga-club-s26-project-fpga-based-cryptographic-coprocessor.git
-cd scripts
-vivado -mode batch -source system.tcl
+source create_vivado_project.tcl
 ```
+
+This command will initialize the Vivado project. Now, you can use the Flow Navigator on the left to:
+1. Run Simulation ► Test #1 and Test #2 should pass (you may need to click `Run All` to give them ample simulation time)
+2. Run Synthesis
+3. Run Implementation
+4. Generate Bitstream
+5. File ► Export ► Export Hardware ► Include Bitstream
+
+You can now use the generated `.xsa` file in Vitis to [Create a Platform Project](https://docs.amd.com/r/2023.1-English/ug1400-vitis-embedded/Creating-a-Platform-Project-from-XSA) and [Create an Application](https://docs.amd.com/r/2023.1-English/ug1400-vitis-embedded/Creating-a-Standalone-Application-Project). The source code files needed for the latter are stored in the `software` folder of this repository.
 
 ## Additional Information
 For more information, please check out the documentation in the `docs` directory [here](https://github.com/Carleton-University-FPGA-Dev-Club/cu-fpga-club-s26-project-fpga-based-cryptographic-coprocessor/tree/main/docs). 
