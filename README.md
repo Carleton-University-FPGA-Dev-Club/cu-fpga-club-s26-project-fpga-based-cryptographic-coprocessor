@@ -32,21 +32,21 @@ This naturally forces the hard cores (ARM - PS) to interact with the soft cores 
 ```
 
 ## Build
-For this project, minimal source files are tracked using Git, and `.tcl` scripts are used to regenerate the project using Vivado and Vitis. This method prevents tracking Vivado-specific binaries and other illegible files.
+This project tracks minimal source code files using Git and uses `.tcl` scripts to regenerate Vivado and Vitis projects. This method prevents tracking large binaries and other illegible files.
 
-Open Vivado, and use the Tcl console to navigate to this project's `scripts` directory and run:
+Clone the repository. Open Vivado, and use the Tcl console to navigate to this project's `scripts` directory and run:
 ```
 source create_vivado_project.tcl
 ```
 
 This command will initialize the Vivado project. Now, you can use the Flow Navigator on the left to:
-1. Run Simulation ► Test #1 and Test #2 should pass (you may need to click `Run All` to give them ample simulation time)
+1. Run Simulation ► Test #1 and Test #2 should pass (you may need to click `Run For` to give them ample simulation time)
 2. Run Synthesis
 3. Run Implementation
 4. Generate Bitstream
 5. File ► Export ► Export Hardware ► Include Bitstream
 
-You can now use the generated `.xsa` file in Vitis to [Create a Platform Project](https://docs.amd.com/r/2023.1-English/ug1400-vitis-embedded/Creating-a-Platform-Project-from-XSA) and [Create an Application](https://docs.amd.com/r/2023.1-English/ug1400-vitis-embedded/Creating-a-Standalone-Application-Project). The source code files needed for the latter are stored in the `software` folder of this repository.
+After the export has generated the `.xsa` file, you can use our [Methodology documentation](https://github.com/Carleton-University-FPGA-Dev-Club/cu-fpga-club-s26-project-fpga-based-cryptographic-coprocessor/blob/main/docs/methodology.md#software-development---vitis) to get started with the Vitis IDE or debug Vivado-related issues.
 
 ## Additional Information
 For more information, please check out the documentation in the `docs` directory [here](https://github.com/Carleton-University-FPGA-Dev-Club/cu-fpga-club-s26-project-fpga-based-cryptographic-coprocessor/tree/main/docs). 
@@ -54,6 +54,7 @@ For more information, please check out the documentation in the `docs` directory
 #### Documentation Quick Links
 * [AES](https://github.com/Carleton-University-FPGA-Dev-Club/cu-fpga-club-s26-project-fpga-based-cryptographic-coprocessor/blob/main/docs/aes.md)
 * [System Architecture](https://github.com/Carleton-University-FPGA-Dev-Club/cu-fpga-club-s26-project-fpga-based-cryptographic-coprocessor/blob/main/docs/architecture.md)
+* [Methodology](https://github.com/Carleton-University-FPGA-Dev-Club/cu-fpga-club-s26-project-fpga-based-cryptographic-coprocessor/blob/main/docs/methodology.md)
 
 #### Future Improvements
 * Switch to an interrupt approach, rather than polling to trigger when the FPGA finishes executing AES-128 
