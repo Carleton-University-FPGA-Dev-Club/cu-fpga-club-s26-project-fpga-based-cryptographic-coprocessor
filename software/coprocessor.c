@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "xil_types.h"
 #include "xil_io.h"
@@ -34,20 +35,28 @@
  */
 
 // AXI Register Definitions
-#define CONTROL_REGISTER XPAR_COPROCESSOR_0_S00_AXI_BASEADDR
+#define CONTROL_REGISTER 0x43C00000
 #define STATUS_REGISTER CONTROL_REGISTER + 0x04
 #define PLAINTEXT_REGISTER_BASE CONTROL_REGISTER + 0x08
 #define KEY_REGISTER_BASE CONTROL_REGISTER + 0x18
 #define CIPHERTEXT_REGISTER_BASE CONTROL_REGISTER + 0x28
 
 
-// The only public function, the rest is internal
-// In the sense that applications using this module should not call anything else
+// Public functions
 void encrypt(u32 *ciphertext, char *plaintext, char *key) {
 	reset_fsm();
 	send_encryption_command(ciphertext, plaintext, key);
 }
 
+_Bool is_password_correct(u32 *expected, u32 *actual) {
+	for (int i = 0; i < 4; i++) {
+		if (expected[i] != actual[i])
+			return false;
+	}
+	return true;
+}
+
+// Internal functions
 // Encrypts one 128-bit chunk of data
 void send_encryption_command(u32 *ciphertext, char *plaintext, char *key) {
 	u32 plaintext_blocks[4];
@@ -56,40 +65,19 @@ void send_encryption_command(u32 *ciphertext, char *plaintext, char *key) {
 	chunk_128_into_32_bits(plaintext_blocks, plaintext);
 	chunk_128_into_32_bits(key_blocks, key);
 
-	//for (int i = 0; i < 4; i++) {
-	//	printf("Plaintext block %d: 0x%08lx\n", i, plaintext_blocks[i]);
-	//	printf("Key block %d: 0x%08lx\n", i, key_blocks[i]);
-	//}
-
 	write_to_plaintext_registers(plaintext_blocks);
 	write_to_key_registers(key_blocks);
-
-	//u32 plaintext_addr = PLAINTEXT_REGISTER_BASE;
-	//for (int i = 0; i < 4; i++) {
-	//	u32 plaintext_chunk = Xil_In32(plaintext_addr);
-	//	printf("Plaintext chunk at address %lx: %08lx\n", plaintext_addr, plaintext_chunk);
-	//	plaintext_addr += 0x04;
-	//}
-
-	//u32 key_addr = KEY_REGISTER_BASE;
-	//for (int i = 0; i < 4; i++) {
-	//	u32 key_chunk = Xil_In32(key_addr);
-	//	printf("Key chunk at address %lx: %08lx\n", key_addr, key_chunk);
-	//	key_addr += 0x04;
-	//}
 
 	start_encryption();
 	poll_ready_register();
 
 	read_ciphertext_registers(ciphertext);
-	//for (int i = 0; i < 4; i++) {
-	//	printf("Ciphertext chunk at %d: %08lx\n", i, ciphertext[i]);
-	//}
 }
 
 // Interaction with AXI registers
 void reset_fsm() {
-	Xil_Out32(CONTROL_REGISTER, 0b00);
+	Xil_Out32(CONTROL_REGISTER, 0b10); // Reset = 1, Start = 0
+	Xil_Out32(CONTROL_REGISTER, 0b00); // Reset = 0, Start = 0
 }
 
 void start_encryption() {

@@ -9,15 +9,18 @@
 #include "coprocessor.h"
 #include "banking.h"
 
+
+// The accounts array is initialized to zero at the start
+// Account numbers must be positive, non-zero
+// So it's a quick way to check that a slot in the array is unused
 account *find_account(account *accounts, int account_number) {
-	for (int i = 0; i < 5; i++) {
-		if (!accounts[i].is_used)
+	for (int i = 0; i < MAX_ACCOUNTS; i++) {
+		if (accounts[i].account_number == 0)
 			continue;
 
 		if (accounts[i].account_number == account_number)
 			return &accounts[i];
 	}
-
 	return NULL;
 }
 
@@ -28,15 +31,15 @@ account *create_account(account *accounts) {
 	double balance;
 
 	int index = -1;
-	for (int i = 0; i < 5; i++) {
-		if (accounts[i].is_used)
-			continue;
-
-		index = i;
+	for (int i = 0; i < MAX_ACCOUNTS; i++) {
+		if (accounts[i].account_number == 0) {
+			index = i;
+			break;
+		}
 	}
 
 	if (index == -1) {
-		printf("\nSorry, you cannot create any more accounts.");
+		printf("Sorry, you cannot create any more accounts.\n");
 		return NULL;
 	}
 
@@ -45,33 +48,32 @@ account *create_account(account *accounts) {
 
 	account *existing = find_account(accounts, account_number);
 	if (existing != NULL) {
-		printf("\nThis account already exists.");
+		printf("This account already exists.\n");
 		return NULL;
 	}
 
 	printf("\nEnter Account Holder Name: ");
-	scanf("%s", name);
+	scanf("%29s", name);
 
 	printf("\nEnter Account Password: ");
-	scanf("%s", password);
+	scanf("%15s", password);
 
 	if (strlen(password) > MAX_PASSWORD_LENGTH) {
-		printf("\nPasswords cannot be more than 16 characters long.");
+		printf("Passwords cannot be more than 16 characters long.\n");
 		return NULL;
 	}
 
 	printf("\nEnter Initial Balance: ");
 	scanf("%lf", &balance);
 
-	account *new_account;
+	if (balance < 0 || account_number <= 0) {
+		printf("Balance and account number must be positive numbers.");
+		return NULL;
+	}
+
+	account *new_account = &accounts[index];
 	new_account->account_number = account_number;
 	strncpy(new_account->name, name, MAX_NAME_LENGTH);
-	strncpy(new_account->password, password, MAX_PASSWORD_LENGTH);
-
-	//printf("Printing the password...\n");
-	//for (int i = 0; i < MAX_PASSWORD_LENGTH; i++) {
-	//	printf("%c", password[i]);
-	//}
 
 	u32 password_blocks[4];
 	encrypt(password_blocks, password, KEY);
@@ -79,24 +81,19 @@ account *create_account(account *accounts) {
 		new_account->password_blocks[i] = password_blocks[i];
 	}
 
-	//printf("Looping through password blocks...\n");
-	//for (int i = 0; i < 4; i++) {
-	//	printf("%0xlx\n", password_blocks[i]);
-	//}
-
 	new_account->balance = balance;
-	new_account->is_used = 1;
-
-	accounts[index] = *new_account;
 	printf("\nAccount added successfully!");
 	return new_account;
 }
 
 void display_all_accounts(account *accounts) {
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < MAX_ACCOUNTS; i++) {
+		if (accounts[i].account_number == 0) {
+			continue;
+		}
+
 		printf("\nAccount Number: %d\n", accounts[i].account_number);
 		printf("Account Name: %s\n", accounts[i].name);
-		//printf("Account Password: %s\n", accounts[i].password);
 		printf("Account Balance: %lf\n", accounts[i].balance);
 		printf("------------------------------------------\n");
 	}
@@ -104,28 +101,13 @@ void display_all_accounts(account *accounts) {
 
 _Bool ask_for_password(account *account) {
 	char password[MAX_PASSWORD_LENGTH] = {0};
-	printf("Enter your password: ");
-	scanf("%s", password);
-
-	//printf("Printing the password...\n");
-	//for (int i = 0; i < MAX_PASSWORD_LENGTH; i++) {
-	//	printf("%c", password[i]);
-	//}
+	printf("\nEnter your password: ");
+	scanf("%15s", password);
 
 	u32 password_blocks[4];
 	encrypt(password_blocks, password, KEY);
 
-	//printf("Looping through password blocks...\n");
-	//for (int i = 0; i < 4; i++) {
-	//	printf("%0xlx\n", password_blocks[i]);
-	//}
-
-	for (int i = 0; i < 4; i++) {
-		if (password_blocks[i] != account->password_blocks[i])
-			return false;
-	}
-
-	return true;
+	return is_password_correct(account->password_blocks, password_blocks);
 }
 
 
@@ -136,7 +118,7 @@ void withdraw(account *account, double amount) {
         printf("New Balance: $%lf\n", account->balance);
     } else {
         printf("Insufficient balance\n");
-    }	
+    }
 }
 
 
@@ -169,6 +151,11 @@ void perform_transaction(account *accounts, _Bool is_deposit) {
 	printf("\nEnter amount: ");
 	scanf("%lf", &amount);
 
+	if (amount <= 0) {
+		printf("The amount must be a positive, non-zero number.\n");
+		return;
+	}
+
 	if (is_deposit) {
 		deposit(account, amount);
 	} else {
@@ -180,7 +167,7 @@ int main(void) {
 	init_platform();
 
 	// Accounts
-	account accounts[5] = {0};
+	account accounts[MAX_ACCOUNTS] = {0};
 
 	int choice;
 	do {
